@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-	<node pkg = "serow_utils"  type = "serow_utils"  name = "serow_utils" output = "screen" respawn = "false"/>
-	<node pkg = "rviz" type = "rviz" respawn = "false" name = "rviz" output = "screen" args ="-d $(find humanoid_state_estimation)/share/hse.rviz"> </node>
-</launch>
