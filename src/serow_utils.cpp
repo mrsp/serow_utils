@@ -11,9 +11,9 @@ class serow_utils{
 private:
 
         ros::NodeHandle n;
-        ros::Subscriber  support_sub, odom_sub, godom_sub, com_sub, gcom_sub, left_sub, right_sub, legodom_sub, compodom_sub;
-        ros::Publisher  support_path_pub,leg_odom_path_pub, com_path_pub, ground_truth_odom_path_pub, ground_truth_com_path_pub, left_path_pub, right_path_pub, comp_odom_path_pub, odom_path_pub;
-    	nav_msgs::Path odom_path_msg, leg_odom_path_msg, com_path_msg, support_path_msg, left_path_msg,right_path_msg, ground_truth_odom_path_msg, ground_truth_com_path_msg, comp_odom_path_msg;
+        ros::Subscriber  support_sub, odom_sub, godom_sub, com_sub, gcom_sub, left_sub, right_sub, legodom_sub, compodom_sub,comlegodom_sub;
+        ros::Publisher  support_path_pub,leg_odom_path_pub, com_path_pub, comleg_path_pub, ground_truth_odom_path_pub, ground_truth_com_path_pub, left_path_pub, right_path_pub, comp_odom_path_pub, odom_path_pub;
+    	nav_msgs::Path odom_path_msg, leg_odom_path_msg, com_path_msg, legcom_path_msg, support_path_msg, left_path_msg,right_path_msg, ground_truth_odom_path_msg, ground_truth_com_path_msg, comp_odom_path_msg;
 
         geometry_msgs::PoseStamped temp_pose;
 
@@ -39,7 +39,7 @@ private:
         right_sub = n.subscribe("/SERoW/RLeg/odom",10,&serow_utils::rightCb,this);
         legodom_sub = n.subscribe("/SERoW/leg_odom",10,&serow_utils::legOdomCb,this);
         support_sub = n.subscribe("/SERoW/support/pose",10,&serow_utils::supportCb,this);
-
+        comlegodom_sub = n.subscribe("/SERoW/CoM/leg_odom",10,&serow_utils::CoMlegOdomCb,this);
     }
     void advertise()
     {
@@ -66,6 +66,7 @@ private:
         ground_truth_odom_path_pub = n.advertise<nav_msgs::Path>("/SERoW/ground_truth/odom/path",2);
         ground_truth_com_path_pub = n.advertise<nav_msgs::Path>("/SERoW/ground_truth/CoM/odom/path",2);
         comp_odom_path_pub = n.advertise<nav_msgs::Path>("/SERoW/comp/odom/path",2);
+	comleg_path_pub = n.advertise<nav_msgs::Path>("/SERoW/CoM/leg_odom/path",2);
     }
     void supportCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
             support_path_msg.header = msg->header;
@@ -120,6 +121,13 @@ private:
             com_path_pub.publish(com_path_msg);
     }
 
+    void CoMlegOdomCb(const nav_msgs::Odometry::ConstPtr& msg){
+            legcom_path_msg.header =  msg->header;
+            temp_pose.header = msg->header;
+            temp_pose.pose = msg->pose.pose;
+            legcom_path_msg.poses.push_back(temp_pose);
+            comleg_path_pub.publish(legcom_path_msg);
+    }
     void gcomCb(const nav_msgs::Odometry::ConstPtr& msg){
             ground_truth_com_path_msg.header =  msg->header;
             temp_pose.header = msg->header;
