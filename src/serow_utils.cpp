@@ -12,7 +12,8 @@ private:
 
         ros::NodeHandle n;
         ros::Subscriber  support_sub, odom_sub, godom_sub, com_sub, gcom_sub, left_sub, right_sub, legodom_sub, compodom_sub,comlegodom_sub;
-        ros::Publisher  support_path_pub,leg_odom_path_pub, com_path_pub, comleg_path_pub, ground_truth_odom_path_pub, ground_truth_com_path_pub, left_path_pub, right_path_pub, comp_odom_path_pub, odom_path_pub;
+        ros::Publisher  support_path_pub,leg_odom_path_pub, com_path_pub, comleg_path_pub, ground_truth_odom_path_pub, ground_truth_com_path_pub, left_path_pub, 
+        right_path_pub, comp_odom_path_pub, odom_path_pub, odom_pose_pub, left_pose_pub, right_pose_pub;
     	nav_msgs::Path odom_path_msg, leg_odom_path_msg, com_path_msg, legcom_path_msg, support_path_msg, left_path_msg,right_path_msg, ground_truth_odom_path_msg, ground_truth_com_path_msg, comp_odom_path_msg;
 
         geometry_msgs::PoseStamped temp_pose;
@@ -57,7 +58,7 @@ private:
 		com_path_msg.poses.resize(2);
         support_path_msg.poses.resize(2);
 
-	support_path_pub= n.advertise<nav_msgs::Path>("/SERoW/support/path",2);
+	    support_path_pub= n.advertise<nav_msgs::Path>("/SERoW/support/path",2);
 		left_path_pub = n.advertise<nav_msgs::Path>("/SERoW/LLeg/path",2);
 		right_path_pub = n.advertise<nav_msgs::Path>("/SERoW/RLeg/path",2);
 		odom_path_pub = n.advertise<nav_msgs::Path>("/SERoW/odom/path",2);
@@ -66,7 +67,10 @@ private:
         ground_truth_odom_path_pub = n.advertise<nav_msgs::Path>("/SERoW/ground_truth/odom/path",2);
         ground_truth_com_path_pub = n.advertise<nav_msgs::Path>("/SERoW/ground_truth/CoM/odom/path",2);
         comp_odom_path_pub = n.advertise<nav_msgs::Path>("/SERoW/comp/odom/path",2);
-	comleg_path_pub = n.advertise<nav_msgs::Path>("/SERoW/CoM/leg_odom/path",2);
+	    comleg_path_pub = n.advertise<nav_msgs::Path>("/SERoW/CoM/leg_odom/path",2);
+        odom_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/pose",2);
+        left_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/LLeg/pose",2);
+        right_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/RLeg/pose",2);
     }
     void supportCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
             support_path_msg.header = msg->header;
@@ -83,6 +87,8 @@ private:
         temp_pose.pose = msg->pose.pose;
 		odom_path_msg.poses.push_back(temp_pose);
 		odom_path_pub.publish(odom_path_msg);
+
+        odom_pose_pub.publish(temp_pose);
     }
 
 
@@ -96,20 +102,22 @@ private:
     }
 
 
-    void rightCb(const nav_msgs::Odometry::ConstPtr& msg){
+    void leftCb(const nav_msgs::Odometry::ConstPtr& msg){
             left_path_msg.header = msg->header;
             temp_pose.header = msg->header;
             temp_pose.pose = msg->pose.pose;
             left_path_msg.poses.push_back(temp_pose);
             left_path_pub.publish(left_path_msg);
+            left_pose_pub.publish(temp_pose);
     }
 
-    void leftCb(const nav_msgs::Odometry::ConstPtr& msg){
+    void rightCb(const nav_msgs::Odometry::ConstPtr& msg){
             right_path_msg.header = msg->header;
             temp_pose.header = msg->header;
             temp_pose.pose = msg->pose.pose;
             right_path_msg.poses.push_back(temp_pose);
             right_path_pub.publish(right_path_msg);
+            right_pose_pub.publish(temp_pose);
     }
 
 
