@@ -2,10 +2,9 @@
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <iostream>
-using namespace std;
 #include <ros/ros.h>
 #include <vector>
-
+using namespace std;
 
 class serow_utils{
 private:
