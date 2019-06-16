@@ -67,7 +67,7 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 85; 255; 255
-      Enabled: true
+      Enabled: false
       Head Diameter: 0.300000012
       Head Length: 0.200000003
       Length: 0.300000012
@@ -85,7 +85,7 @@ Visualization Manager:
       Shaft Length: 0.100000001
       Topic: /SERoW/CoM/odom/path
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
@@ -113,7 +113,7 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 255; 85; 0
-      Enabled: true
+      Enabled: false
       Head Diameter: 0.300000012
       Head Length: 0.200000003
       Length: 0.300000012
@@ -131,12 +131,12 @@ Visualization Manager:
       Shaft Length: 0.100000001
       Topic: /SERoW/support/path
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
       Color: 0; 255; 0
-      Enabled: true
+      Enabled: false
       Head Diameter: 0.300000012
       Head Length: 0.200000003
       Length: 0.300000012
@@ -154,7 +154,7 @@ Visualization Manager:
       Shaft Length: 0.100000001
       Topic: /SERoW/leg_odom/path
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Axes Length: 0.100000001
       Axes Radius: 0.00999999978
@@ -556,10 +556,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.805401981
+      Pitch: 0.875401914
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.53170586
+      Yaw: 4.59666443
     Saved: ~
 Window Geometry:
   Displays:
