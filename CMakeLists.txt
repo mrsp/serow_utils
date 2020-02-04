@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   roscpp
   std_msgs
+  tf
+  laser_geometry
 )
 
 ## System dependencies are found with CMake's conventions

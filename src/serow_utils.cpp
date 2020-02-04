@@ -3,6 +3,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <iostream>
 #include <ros/ros.h>
+#include <tf/transform_broadcaster.h>
+#include <laser_geometry/laser_geometry.h>
 #include <vector>
 using namespace std;
 
@@ -10,17 +12,17 @@ class serow_utils{
 private:
 
         ros::NodeHandle n;
-        bool isQuadruped;
-        ros::Subscriber  support_sub, odom_sub, godom_sub, com_sub, gcom_sub, left_sub, right_sub, legodom_sub, compodom_sub,comlegodom_sub;
-        ros::Publisher  support_path_pub,leg_odom_path_pub, com_path_pub, comleg_path_pub, ground_truth_odom_path_pub, ground_truth_com_path_pub, left_path_pub, 
+        bool isQuadruped, odom_inc;
+        ros::Subscriber  laserScan_sub, support_sub, odom_sub, godom_sub, com_sub, gcom_sub, left_sub, right_sub, legodom_sub, compodom_sub,comlegodom_sub;
+        ros::Publisher  pointcloudFromLaserScan_pub, support_path_pub,leg_odom_path_pub, com_path_pub, comleg_path_pub, ground_truth_odom_path_pub, ground_truth_com_path_pub, left_path_pub, 
         right_path_pub, comp_odom_path_pub, odom_path_pub, odom_pose_pub, left_pose_pub, right_pose_pub, comp_pose_pub;
     	nav_msgs::Path odom_path_msg, leg_odom_path_msg, com_path_msg, legcom_path_msg, support_path_msg, left_path_msg,right_path_msg, ground_truth_odom_path_msg, ground_truth_com_path_msg, comp_odom_path_msg;
-
+        nav_msgs::Odometry odom_msg;
         ros::Publisher LF_path_pub, LH_path_pub, RF_path_pub, RH_path_pub, LF_pose_pub, LH_pose_pub, RF_pose_pub, RH_pose_pub;
         nav_msgs::Path LF_path_msg, LH_path_msg, RF_path_msg, RH_path_msg;
         ros::Subscriber LF_sub,  LH_sub, RF_sub, RH_sub;
         geometry_msgs::PoseStamped temp_pose;
-
+        laser_geometry::LaserProjection projector_;
 
     void compodomCb(const nav_msgs::Odometry::ConstPtr& msg)
     {
@@ -36,6 +38,7 @@ private:
     void subscribe()
     {
         odom_sub = n.subscribe("SERoW/odom",10,&serow_utils::odomCb,this);
+        odom_inc = false;
         compodom_sub = n.subscribe("/SERoW/comp/odom0",10,&serow_utils::compodomCb,this);
         godom_sub = n.subscribe("/SERoW/ground_truth/odom",10,&serow_utils::godomCb,this);
         com_sub = n.subscribe("SERoW/CoM/odom",10,&serow_utils::comCb,this);
@@ -43,7 +46,7 @@ private:
         legodom_sub = n.subscribe("/SERoW/leg_odom",10,&serow_utils::legOdomCb,this);
         support_sub = n.subscribe("/SERoW/support/pose",10,&serow_utils::supportCb,this);
         comlegodom_sub = n.subscribe("/SERoW/CoM/leg_odom",10,&serow_utils::CoMlegOdomCb,this);
-
+        laserScan_sub =  n.subscribe("/scan",10,&serow_utils::laserCb,this);
         if(!isQuadruped){
             left_sub = n.subscribe("/SERoW/LLeg/odom",10,&serow_utils::leftCb,this);
             right_sub = n.subscribe("/SERoW/RLeg/odom",10,&serow_utils::rightCb,this);
@@ -83,6 +86,7 @@ private:
 	    support_path_pub= n.advertise<nav_msgs::Path>("/SERoW/support/path",2);
 	    comp_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/comp/pose0",10);
         odom_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/pose",2);
+        pointcloudFromLaserScan_pub = n.advertise<sensor_msgs::PointCloud>("/SERoW/pointcloud",10);
 
         //Humanoid/Biped Topics
         if(!isQuadruped)
@@ -125,12 +129,14 @@ private:
 
     void odomCb(const nav_msgs::Odometry::ConstPtr& msg)
     {
+        odom_inc = true;
+        odom_msg = *msg;
         odom_path_msg.header = msg->header;
         temp_pose.header = msg->header;
         temp_pose.pose = msg->pose.pose;
 		odom_path_msg.poses.push_back(temp_pose);
 		odom_path_pub.publish(odom_path_msg);
-
+        
         odom_pose_pub.publish(temp_pose);
     }
 
@@ -200,7 +206,26 @@ private:
             RH_pose_pub.publish(temp_pose);
     }
 
+    void laserCb(const sensor_msgs::LaserScan::ConstPtr& scan_in)
+    {
+        if(odom_inc)
+        {
+        sensor_msgs::PointCloud cloud;
+        tf::Transform bt = tf::Transform(tf::Quaternion(odom_msg.pose.pose.orientation.x,
+                            odom_msg.pose.pose.orientation.y,
+                            odom_msg.pose.pose.orientation.z,
+                            odom_msg.pose.pose.orientation.w),
+                 tf::Vector3(odom_msg.pose.pose.position.x,odom_msg.pose.pose.position.y,odom_msg.pose.pose.position.z));
 
+        tf::StampedTransform bst =   tf::StampedTransform(bt, scan_in->header.stamp, odom_msg.header.frame_id, scan_in->header.frame_id);
+        tf::Transformer btf;
+        btf.setTransform(bst);
+        projector_.transformLaserScanToPointCloud(odom_msg.header.frame_id,*scan_in,
+          cloud,btf);
+
+        pointcloudFromLaserScan_pub.publish(cloud);
+        }
+    }
 
     void comCb(const nav_msgs::Odometry::ConstPtr& msg){
             com_path_msg.header =  msg->header;
