@@ -37,26 +37,26 @@ private:
 
     void subscribe()
     {
-        odom_sub = n.subscribe("SERoW/odom",10,&serow_utils::odomCb,this);
+        odom_sub = n.subscribe("serow/odom",10,&serow_utils::odomCb,this);
         odom_inc = false;
-        compodom_sub = n.subscribe("/SERoW/comp/odom0",10,&serow_utils::compodomCb,this);
-        godom_sub = n.subscribe("/SERoW/ground_truth/odom",10,&serow_utils::godomCb,this);
-        com_sub = n.subscribe("SERoW/CoM/odom",10,&serow_utils::comCb,this);
-        gcom_sub = n.subscribe("/SERoW/ground_truth/CoM/odom",10,&serow_utils::gcomCb,this);
-        legodom_sub = n.subscribe("/SERoW/leg_odom",10,&serow_utils::legOdomCb,this);
-        support_sub = n.subscribe("/SERoW/support/pose",10,&serow_utils::supportCb,this);
-        comlegodom_sub = n.subscribe("/SERoW/CoM/leg_odom",10,&serow_utils::CoMlegOdomCb,this);
-        laserScan_sub =  n.subscribe("/scan",10,&serow_utils::laserCb,this);
+        compodom_sub = n.subscribe("serow/comp/odom0",10,&serow_utils::compodomCb,this);
+        godom_sub = n.subscribe("serow/ground_truth/odom",10,&serow_utils::godomCb,this);
+        com_sub = n.subscribe("serow/CoM/odom",10,&serow_utils::comCb,this);
+        gcom_sub = n.subscribe("serow/ground_truth/CoM/odom",10,&serow_utils::gcomCb,this);
+        legodom_sub = n.subscribe("serow/leg_odom",10,&serow_utils::legOdomCb,this);
+        support_sub = n.subscribe("serow/support/pose",10,&serow_utils::supportCb,this);
+        comlegodom_sub = n.subscribe("serow/CoM/leg_odom",10,&serow_utils::CoMlegOdomCb,this);
+        laserScan_sub =  n.subscribe("scan",10,&serow_utils::laserCb,this);
         if(!isQuadruped){
-            left_sub = n.subscribe("/SERoW/LLeg/odom",10,&serow_utils::leftCb,this);
-            right_sub = n.subscribe("/SERoW/RLeg/odom",10,&serow_utils::rightCb,this);
+            left_sub = n.subscribe("serow/LLeg/odom",10,&serow_utils::leftCb,this);
+            right_sub = n.subscribe("serow/RLeg/odom",10,&serow_utils::rightCb,this);
         }
         else
         {
-            LF_sub = n.subscribe("/SERoW/LFLeg/odom",10,&serow_utils::LFCb,this);
-            LH_sub = n.subscribe("/SERoW/LHLeg/odom",10,&serow_utils::LHCb,this);
-            RF_sub = n.subscribe("/SERoW/RFLeg/odom",10,&serow_utils::RFCb,this);
-            RH_sub = n.subscribe("/SERoW/RHLeg/odom",10,&serow_utils::RHCb,this);
+            LF_sub = n.subscribe("serow/LFLeg/odom",10,&serow_utils::LFCb,this);
+            LH_sub = n.subscribe("serow/LHLeg/odom",10,&serow_utils::LHCb,this);
+            RF_sub = n.subscribe("serow/RFLeg/odom",10,&serow_utils::RFCb,this);
+            RH_sub = n.subscribe("serow/RHLeg/odom",10,&serow_utils::RHCb,this);
         }
         
 
@@ -76,27 +76,27 @@ private:
         support_path_msg.poses.resize(2);
 
 
-		odom_path_pub = n.advertise<nav_msgs::Path>("/SERoW/odom/path",2);
-		leg_odom_path_pub = n.advertise<nav_msgs::Path>("/SERoW/leg_odom/path",2);
-		com_path_pub = n.advertise<nav_msgs::Path>("/SERoW/CoM/odom/path",2);
-        ground_truth_odom_path_pub = n.advertise<nav_msgs::Path>("/SERoW/ground_truth/odom/path",2);
-        ground_truth_com_path_pub = n.advertise<nav_msgs::Path>("/SERoW/ground_truth/CoM/odom/path",2);
-        comp_odom_path_pub = n.advertise<nav_msgs::Path>("/SERoW/comp/odom0/path",2);
-	    comleg_path_pub = n.advertise<nav_msgs::Path>("/SERoW/CoM/leg_odom/path",2);
-	    support_path_pub= n.advertise<nav_msgs::Path>("/SERoW/support/path",2);
-	    comp_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/comp/pose0",10);
-        odom_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/pose",2);
-        pointcloudFromLaserScan_pub = n.advertise<sensor_msgs::PointCloud>("/SERoW/pointcloud",10);
+		odom_path_pub = n.advertise<nav_msgs::Path>("serow/odom/path",2);
+		leg_odom_path_pub = n.advertise<nav_msgs::Path>("serow/leg_odom/path",2);
+		com_path_pub = n.advertise<nav_msgs::Path>("serow/CoM/odom/path",2);
+        ground_truth_odom_path_pub = n.advertise<nav_msgs::Path>("serow/ground_truth/odom/path",2);
+        ground_truth_com_path_pub = n.advertise<nav_msgs::Path>("serow/ground_truth/CoM/odom/path",2);
+        comp_odom_path_pub = n.advertise<nav_msgs::Path>("serow/comp/odom0/path",2);
+	    comleg_path_pub = n.advertise<nav_msgs::Path>("serow/CoM/leg_odom/path",2);
+	    support_path_pub= n.advertise<nav_msgs::Path>("serow/support/path",2);
+	    comp_pose_pub = n.advertise<geometry_msgs::PoseStamped>("serow/comp/pose0",10);
+        odom_pose_pub = n.advertise<geometry_msgs::PoseStamped>("serow/pose",2);
+        pointcloudFromLaserScan_pub = n.advertise<sensor_msgs::PointCloud>("serow/pointcloud",10);
 
         //Humanoid/Biped Topics
         if(!isQuadruped)
         {
             left_path_msg.poses.resize(2);
             right_path_msg.poses.resize(2);
-            left_path_pub = n.advertise<nav_msgs::Path>("/SERoW/LLeg/path",2);
-            right_path_pub = n.advertise<nav_msgs::Path>("/SERoW/RLeg/path",2);
-            left_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/LLeg/pose",2);
-            right_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/RLeg/pose",2);
+            left_path_pub = n.advertise<nav_msgs::Path>("serow/LLeg/path",2);
+            right_path_pub = n.advertise<nav_msgs::Path>("serow/RLeg/path",2);
+            left_pose_pub = n.advertise<geometry_msgs::PoseStamped>("serow/LLeg/pose",2);
+            right_pose_pub = n.advertise<geometry_msgs::PoseStamped>("serow/RLeg/pose",2);
         }
         //Centauro/Quaruped Topics
         else
@@ -105,14 +105,14 @@ private:
             RF_path_msg.poses.resize(2);
             LH_path_msg.poses.resize(2);
             RH_path_msg.poses.resize(2);
-            LF_path_pub = n.advertise<nav_msgs::Path>("/SERoW/LFLeg/path",2);
-            RF_path_pub = n.advertise<nav_msgs::Path>("/SERoW/RFLeg/path",2);
-            LH_path_pub = n.advertise<nav_msgs::Path>("/SERoW/LHLeg/path",2);
-            RH_path_pub = n.advertise<nav_msgs::Path>("/SERoW/RHLeg/path",2);
-            LF_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/LFLeg/pose",2);
-            RF_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/RFLeg/pose",2);
-            LH_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/LHLeg/pose",2);
-            RH_pose_pub = n.advertise<geometry_msgs::PoseStamped>("/SERoW/RHLeg/pose",2);
+            LF_path_pub = n.advertise<nav_msgs::Path>("serow/LFLeg/path",2);
+            RF_path_pub = n.advertise<nav_msgs::Path>("serow/RFLeg/path",2);
+            LH_path_pub = n.advertise<nav_msgs::Path>("serow/LHLeg/path",2);
+            RH_path_pub = n.advertise<nav_msgs::Path>("serow/RHLeg/path",2);
+            LF_pose_pub = n.advertise<geometry_msgs::PoseStamped>("serow/LFLeg/pose",2);
+            RF_pose_pub = n.advertise<geometry_msgs::PoseStamped>("serow/RFLeg/pose",2);
+            LH_pose_pub = n.advertise<geometry_msgs::PoseStamped>("serow/LHLeg/pose",2);
+            RH_pose_pub = n.advertise<geometry_msgs::PoseStamped>("serow/RHLeg/pose",2);
         }
         
 
