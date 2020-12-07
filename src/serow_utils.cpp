@@ -283,7 +283,7 @@ void serow_utils::connect(const ros::NodeHandle nh)
 {
     n = nh;
     ros::NodeHandle n_p("~");
-    n_p.param<bool>("serow/isQuadruped", isQuadruped, false);
+    n_p.param<bool>("/serow/isQuadruped", isQuadruped, false);
     subscribe();
     advertise();
 }
