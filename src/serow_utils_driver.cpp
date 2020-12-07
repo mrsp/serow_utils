@@ -11,6 +11,6 @@ int main( int argc, char** argv )
     }
     serow_utils* su = new serow_utils();
     su->connect(n);
-    ros::spin();
-
+    //ros::spin();
+    su->run();
 }

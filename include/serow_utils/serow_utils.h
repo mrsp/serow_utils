@@ -14,17 +14,18 @@ class serow_utils
 {
 private:
     ros::NodeHandle n;
-    bool isQuadruped, odom_inc;
+    bool isQuadruped;
     ros::Subscriber laserScan_sub, support_sub, odom_sub, godom_sub, com_sub, gcom_sub, left_sub, right_sub, legodom_sub, compodom_sub, comlegodom_sub;
     ros::Publisher pointcloudFromLaserScan_pub, support_path_pub, leg_odom_path_pub, com_path_pub, comleg_path_pub, ground_truth_odom_path_pub, ground_truth_com_path_pub, left_path_pub,
         right_path_pub, comp_odom_path_pub, odom_path_pub, odom_pose_pub, left_pose_pub, right_pose_pub, comp_pose_pub;
     nav_msgs::Path odom_path_msg, leg_odom_path_msg, com_path_msg, legcom_path_msg, support_path_msg, left_path_msg, right_path_msg, ground_truth_odom_path_msg, ground_truth_com_path_msg, comp_odom_path_msg;
-    nav_msgs::Odometry odom_msg;
     ros::Publisher LF_path_pub, LH_path_pub, RF_path_pub, RH_path_pub, LF_pose_pub, LH_pose_pub, RF_pose_pub, RH_pose_pub;
     nav_msgs::Path LF_path_msg, LH_path_msg, RF_path_msg, RH_path_msg;
     ros::Subscriber LF_sub, LH_sub, RF_sub, RH_sub;
     laser_geometry::LaserProjection projector_;
-
+    nav_msgs::Odometry odom_msg, leg_odom_msg, LLeg_odom_msg, RLeg_odom_msg, LFLeg_odom_msg, RFLeg_odom_msg, LHLeg_odom_msg, RHLeg_odom_msg, gt_com_odom_msg, gt_odom_msg, com_leg_odom_msg, com_odom_msg;
+    geometry_msgs::PoseStamped support_pose_msg;
+    bool support_pose_inc, odom_inc, leg_odom_inc, LLeg_inc, RLeg_inc, LFLeg_inc, RFLeg_inc, LHLeg_inc, RHLeg_inc, com_odom_inc, com_leg_odom_inc, gt_com_odom_inc, gt_odom_inc;
     int publish_buffer_size, subscribe_buffer_size, vector_size;
     void compodomCb(const nav_msgs::Odometry::ConstPtr &msg);
     void subscribe();
@@ -43,7 +44,7 @@ private:
     void CoMlegOdomCb(const nav_msgs::Odometry::ConstPtr &msg);
     void gcomCb(const nav_msgs::Odometry::ConstPtr &msg);
     void godomCb(const nav_msgs::Odometry::ConstPtr &msg);
-
+    void publish();
 public:
     void connect(const ros::NodeHandle nh);
     void run();
